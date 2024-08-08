@@ -1,32 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/material.dart';
+import 'menu_page.dart';
 
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: const FoodAppHome(),
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
-    );
-  }
-}
-
-class FoodAppHome extends StatefulWidget {
-  const FoodAppHome({super.key});
-
-  @override
-  // ignore: library_private_types_in_public_api
-  _FoodAppHomeState createState() => _FoodAppHomeState();
-}
-
-class _FoodAppHomeState extends State<FoodAppHome> {
-  int _currentIndex = 0;
+class HomePage extends StatelessWidget {
+  const HomePage({super.key});
 
   String _getGreeting() {
     final hour = DateTime.now().hour;
@@ -39,7 +16,7 @@ class _FoodAppHomeState extends State<FoodAppHome> {
     }
   }
 
-  void _showBottomSheet() {
+  void _showBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -130,10 +107,10 @@ class _FoodAppHomeState extends State<FoodAppHome> {
                   child: ListView(
                     scrollDirection: Axis.horizontal,
                     children: [
-                      _buildCategoryItem(Icons.fastfood, 'Fast Food'),
-                      _buildCategoryItem(Icons.local_pizza, 'Pizza'),
-                      _buildCategoryItem(Icons.local_cafe, 'Cafe'),
-                      _buildCategoryItem(Icons.icecream, 'Dessert'),
+                      _buildCategoryItem(context, Icons.fastfood, 'Fast Food'),
+                      _buildCategoryItem(context, Icons.local_pizza, 'Pizza'),
+                      _buildCategoryItem(context, Icons.local_cafe, 'Cafe'),
+                      _buildCategoryItem(context, Icons.icecream, 'Dessert'),
                     ],
                   ),
                 ),
@@ -170,70 +147,58 @@ class _FoodAppHomeState extends State<FoodAppHome> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _showBottomSheet,
+        onPressed: () => _showBottomSheet(context),
         backgroundColor: Colors.deepOrange,
         child: const Icon(Icons.more_horiz_outlined),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        currentIndex: _currentIndex,
-        onTap: (index) {
-          setState(() {
-            _currentIndex = index;
-          });
-        },
-        items: const [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.search),
-            label: 'Search',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
-        ],
       ),
     );
   }
 
-  Widget _buildCategoryItem(IconData icon, String label) {
-    return Container(
-      width: 100,
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(15),
-        gradient: const LinearGradient(
-          colors: [Colors.orangeAccent, Colors.deepOrange],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
+  Widget _buildCategoryItem(BuildContext context, IconData icon, String label) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => MenuPage(itemName: label),
+          ),
+        );
+      },
+      child: Container(
+        width: 100,
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          gradient: const LinearGradient(
+            colors: [Colors.orangeAccent, Colors.deepOrange],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.orangeAccent.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 7,
+              offset: const Offset(0, 3),
+            ),
+          ],
         ),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.orangeAccent.withOpacity(0.5),
-            spreadRadius: 3,
-            blurRadius: 7,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            radius: 35,
-            backgroundColor: Colors.white,
-            child: Icon(icon, size: 35, color: Colors.deepOrange),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            label,
-            style: const TextStyle(fontSize: 16, color: Colors.white),
-            textAlign: TextAlign.center,
-          ),
-        ],
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircleAvatar(
+              radius: 35,
+              backgroundColor: Colors.white,
+              child: Icon(icon, size: 35, color: Colors.deepOrange),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              label,
+              style: const TextStyle(fontSize: 16, color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
       ),
     );
   }
